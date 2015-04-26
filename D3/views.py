@@ -6,24 +6,50 @@ import pdb
 import urllib
 import json
 from django.utils.safestring import SafeString
+import csv
 
 def home(request):
 	return render(request, 'D3/home.html', {})
 
 def d3_visual(request):
-	url = "http://localhost:8983/solr/collection1/select?q=*&rows=2&wt=json&indent=true"
+	url = "http://localhost:8983/solr/collection1/select?q=*&rows=500&wt=json&indent=true"
 	response = urllib.urlopen(url);
 	data = json.loads(response.read())
+
 	#print json.dumps(data['response'], indent=4)
 	#return render(request, 'D3/d3_visual.html', {'data':SafeString(data)})
+	
 	response = data["response"]
 	docs = response["docs"]
+	
+	pie_dict = {}
+	d3_data = []
 	for each in docs:
-		print each["id"]
-		print each["title"][0]
-		print each["content_type"][0]
-		#print each["content"]
-	return HttpResponse(json.dumps(docs), content_type="application/json")
+		if "title" not in each:
+			continue
+		d3_data += [{'id':each["id"], 'title':each["title"][0], 'content_type':each["content_type"][0], 'content_length':len(each["content"][0])}]
+		if each["content_type"][0] in pie_dict:
+			pie_dict[each["content_type"][0]] += 1
+		else:
+			pie_dict[each["content_type"][0]] = 1
+
+	f = open("./D3/static/D3/pie.csv","w")
+	f.write("content-type,value\n")
+	for each in pie_dict:
+		f.write(str(each) + "," + str(pie_dict[each]) + "\n")
+	f.close()
+
+	f = open("./D3/static/D3/bar.tsv","w")
+	f.write("file,content-length\n")
+	i = 0
+	for each in docs:
+		if i>100:
+			break
+		i += 1
+		f.write( "File" + str(i) + "," + str(len(each["content"][0])) + "\n")
+	f.close()
+
+	return HttpResponse(json.dumps({"d3_data":d3_data}), content_type="application/json")
 
 def banana_visual(request):
 	return render(request, 'D3/banana_visual.html', {})
