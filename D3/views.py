@@ -17,7 +17,6 @@ def d3_visual(request):
 	data = json.loads(response.read())
 
 	#print json.dumps(data['response'], indent=4)
-	#return render(request, 'D3/d3_visual.html', {'data':SafeString(data)})
 	
 	response = data["response"]
 	docs = response["docs"]
@@ -33,12 +32,14 @@ def d3_visual(request):
 		else:
 			pie_dict[each["content_type"][0]] = 1
 
+	# creating pie chart file
 	f = open("./D3/static/D3/pie.csv","w")
 	f.write("content-type,value\n")
 	for each in pie_dict:
 		f.write(str(each) + "," + str(pie_dict[each]) + "\n")
 	f.close()
 
+	# Creating bar chart file
 	f = open("./D3/static/D3/bar.tsv","w")
 	f.write("file,content-length\n")
 	i = 0
