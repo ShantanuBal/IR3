@@ -34,14 +34,14 @@ def d3_visual(request):
 
 	# creating pie chart file
 	f = open("./D3/static/D3/pie.csv","w")
-	f.write("content-type,value\n")
+	f.write("age,population\n")
 	for each in pie_dict:
 		f.write(str(each) + "," + str(pie_dict[each]) + "\n")
 	f.close()
 
 	# Creating bar chart file
 	f = open("./D3/static/D3/bar.tsv","w")
-	f.write("file,content-length\n")
+	f.write("letter,frequency\n")
 	i = 0
 	for each in docs:
 		if i>100:

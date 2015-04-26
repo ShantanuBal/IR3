@@ -1,10 +1,10 @@
 <html>
   <head>
   	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-  	<script src="/Users/priyanka/Desktop/IR/IR3/D3/static/D3/d3.js"></script>
-	<link rel="stylesheet" type="text/css" href="/Users/priyanka/Desktop/IR/IR3/D3/static/D3/d3.css">
-	<script type="text/javascript" src="/Users/priyanka/Desktop/IR/IR3/D3/static/D3/d3.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  	<script src="/static/D3/d3.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/D3/d3.css">
+	<script type="text/javascript" src="/static/D3/d3.min.js"></script>
+    	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<title>Homework3 CSCI572</title> 
   </head>
 
@@ -62,7 +62,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-d3.csv("http://localhost:8000/d3/pie.csv", function(error, data) {
+d3.csv("/static/D3/pie.csv", function(error, data) {
 
   data.forEach(function(d) {
     d.population = +d.population;
