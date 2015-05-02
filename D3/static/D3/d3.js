@@ -463,13 +463,70 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
             .attr("x2", width );
     }
 });
+/* Time Series End Data*/
+
+/* World Map Starts */
+
+  var bombMap = new Datamap({
+      element: document.getElementById('map_bombs'),
+      scope: 'world',
+      geographyConfig: {
+          popupOnHover: false,
+          highlightOnHover: false
+      },
+      fills: {
+        // Colors for countries
+            "RUS": "#9A3C15",
+            defaultFill: "#2C88BA"
+      },
+      data: {
+        //To add different colors to different countries using the colors above
+          // 'RUS': {fillKey: 'RUS'} 
+      }
+  });
+
+       var bombs = [{
+          ID: 'RDS-37',
+          radius: 8,
+          cType: "text/html",
+          fillKey: 'RUS',
+          date: '1955-11-22',
+          latitude: -80,
+          longitude: 0,
+          fillOpacity: 10
+
+        },{
+          ID: 'Tsar Bomba',
+          radius: 8,
+          cType: "text/html",
+          date: '1961-10-31',
+          fillKey: 'RUS',
+          latitude: 73.482,
+          longitude: 54.5854,
+          fillOpacity:10
+        }
+      ];
+  //draw bubbles for bombs
+  bombMap.bubbles(bombs, {
+      popupTemplate: function (geo, data) { 
+              return ['<div class="hoverinfo">ID: ' +  data.ID,
+              '<br/>Content Type: ' +  data.cType,
+              '<br/>Date: ' +  data.date + '',
+              '</div>'].join('');
+      }
+  });
+
+/* World Map Ends */
 
 
+ /* SUCCESS ENDS HERE*/
 }});
 
-/*Time series data*/
 
-/* Time Series End Data*/
-  /* SUCCESS ENDS HERE*/
+
+
+
+
+ 
 });
 });
