@@ -168,7 +168,303 @@ function type(d) {
 
 
   /* WORD CLOUD ENDS HERE */
+  // functions to parse the date / time formats
+parseDate = d3.time.format("%Y-%m-%d").parse;
+parseTime = d3.time.format("%H:%M:%S").parse;
+formatDate = d3.time.format("%d-%b"),
+formatTime = d3.time.format("%H:%M"),
+bisectDate = d3.bisector(function(d) { return d.date; }).left; 
+
+// Load the raw data
+d3.json("/static/D3/downloads.json", function(error, events) {
+
+    // parse and format all the event data
+    events.forEach(function(d) {
+        d.dtg = d.dtg.slice(0,-4)+'0:00'; // get the 10 minute block
+        dtgSplit = d.dtg.split(" ");      // split on the space
+        d.date = dtgSplit[0];             // get the date seperatly
+        d.time = dtgSplit[1];             // format the time
+        d.number_downloaded = 1;          // Number of downloads
+    });
+
+    // get the scatterplot data and nest the data by date/time
+    var data = d3.nest()
+        .key(function(d) { return d.dtg;})
+        .rollup(function(d) {
+            return d3.sum(d,function(g) {return g.number_downloaded; });
+            })
+        .entries(events);
+
+    // format the date/time data
+    data.forEach(function(d) {
+        d.dtg = d.key;                   // get the 10 minute block
+        dtgSplit = d.dtg.split(" ");     // split on the space
+        d.date = parseDate(dtgSplit[0]); // get the date seperatly
+        d.time = parseTime(dtgSplit[1]); // format the time
+        d.number_downloaded = d.values;  // Number of downloads
+    });
+
+    // nest the data by date for the daily graph
+    var dataDate = d3.nest()
+        .key(function(d) { return d.date;})
+        .rollup(function(d) {
+            return d3.sum(d,function(g) {return g.number_downloaded; });
+            })
+        .entries(events);
+
+    // format the date data
+    dataDate.forEach(function(d) {
+        d.date = parseDate(d.key); // format the date
+        d.close = d.values;        // Number of downloads
+    });
+
+    // nest the data by 10 minute intervals for the time graph
+    var dataTime = d3.nest()
+        .key(function(d) { return d.time;})
+        .sortKeys(d3.ascending)
+        .rollup(function(d) {
+            return d3.sum(d,function(g) {return g.number_downloaded; });
+            })
+        .entries(events);
+
+    // format the time data
+    dataTime.forEach(function(d) {
+        d.time = d.key;             // get the 10 minute block
+        d.time = parseTime(d.time); // get the date seperatly
+        d.close = d.values;         // Number of downloads
+    });
+
+    // Get number of days in date range to calculate scatterplotWidth
+    var oneDay = 24*60*60*250; // hours*minutes*seconds*milliseconds
+    var dateStart = d3.min(data, function(d) { return d.date; });
+    var dateFinish = d3.max(data, function(d) { return d.date; });
+    var numberDays = Math.round(Math.abs((dateStart.getTime() -
+                               dateFinish.getTime())/(oneDay)));
+
+    var margin = {top: 20, right: 20, bottom: 20, left: 200},
+        scatterplotHeight = 520,
+        scatterplotWidth = numberDays * 1.5,
+        dateGraphHeight = 220,
+        timeGraphWidth = 220;
+
+    // Set the dimensions of the canvas / graph
+    var height = scatterplotHeight + dateGraphHeight,
+        width = scatterplotWidth + timeGraphWidth;
+
+    // ************* draw the scatterplot ****************
+
+    var formatDay_Time = d3.time.format("%H:%M");     // tooltip time
+    var formatWeek_Year = d3.time.format("%d-%m-%Y"); // tooltip date
+
+    var x = d3.time.scale().range([0, scatterplotWidth]);
+    var y = d3.time.scale().range([0, scatterplotHeight]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .ticks(7);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("right")
+        .ticks(12,0,0)
+        .tickFormat(d3.time.format("%H:%M"));
+
+    var svg = d3.select("timeseries")
+        .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform", "translate(" + margin.left + ","
+                                            + margin.top + ")");
+
+    // State the functions for the grid
+    function make_x_axis() {
+        return d3.svg.axis()
+          .scale(x)
+          .orient("bottom")
+          .ticks(12)
+    }
+
+    // State the functions for the grid
+    function make_y_axis() {
+        return d3.svg.axis()
+          .scale(y)
+          .orient("right")
+          .ticks(8)
+    }
+            
+    // Set the domains
+    y.domain([new Date(1899, 12, 02, 0, 0, 0), 
+              new Date(1899, 12, 01, 0, 0, 1)]);
+    x.domain(d3.extent(data, function(d) { return d.date; }));
+    
+    // Draw the Axes and the tick labels
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + scatterplotHeight + ")")
+        .call(xAxis)
+      .selectAll("text")
+        .style("text-anchor", "middle");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate("  + scatterplotWidth +  ",0)")
+        .call(yAxis)
+      .selectAll("text");
+
+    // draw the plotted circles
+    svg.selectAll(".dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", function(d) { return d.number_downloaded*3.5; })
+        .style("opacity", 0.8)
+        .style("fill", "#e31a1c" )
+        .attr("cx", function(d) { return x(d.date); })
+        .attr("cy", function(d) { return y(d.time); })
+            ;    
+
+    // *********** place the mouse movement information **************
+    var focus = svg.append("g") 
+        .style("display", "none");
+
+    // append the x line
+    focus.append("line")
+        .attr("class", "x")
+        .style("stroke", "#33a02c")
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 1)
+        .style("shape-rendering", "crispEdges");
+
+    // append the y line
+    focus.append("line")
+        .attr("class", "y")
+        .style("stroke", "#33a02c")
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 1)
+        .style("shape-rendering", "crispEdges");
+
+    // place the value at the intersection
+    focus.append("text")
+        .attr("class", "y1")
+        .style("stroke", "white")
+        .style("stroke-width", "3.5px")
+        .style("opacity", 0.8)
+        .attr("dx", 8)
+        .attr("dy", "-.3em");
+    focus.append("text")
+        .attr("class", "y2")
+        .attr("dx", 8)
+        .attr("dy", "-.3em");
+
+    // place the date at the intersection
+    focus.append("text")
+        .attr("class", "y3")
+        .style("stroke", "white")
+        .style("stroke-width", "3.5px")
+        .style("opacity", 0.8)
+        .attr("dx", 8)
+        .attr("dy", "1em");
+    focus.append("text")
+        .attr("class", "y4")
+        .attr("dx", 8)
+        .attr("dy", "1em");
+    
+    // append the rectangle to capture mouse
+    svg.append("rect")
+        .attr("width", scatterplotWidth)
+        .attr("height", scatterplotHeight)
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mouseout", function() { focus.style("display", "none"); })
+        .on("mousemove", mousemove);
+
+    // The conversion ratio to change x position of cursor to
+    // the index of the date array
+    var convertDate =  dataDate.length/scatterplotWidth;
+    var convertTime =  dataTime.length/scatterplotHeight;
+
+    // interactive mouse function
+    function mousemove() {
+        var xpos = d3.mouse(this)[0],
+            x0 = x.invert(xpos),
+            y0 = d3.mouse(this)[1],
+            y1 = y.invert(y0),
+            date1 = d3.mouse(this)[0];
+
+        // Place the intersection date text
+        focus.select("text.y1")
+            .attr("transform",
+                  "translate(" + (date1 - 50) + "," + (y0+20) + ")")
+            .text(formatDate(x0));
+        focus.select("text.y2")
+            .attr("transform",
+                  "translate(" + (date1 - 50) + "," + (y0+20) + ")")
+            .text(formatDate(x0));
+
+        // Place the intersection time text
+        focus.select("text.y3")
+            .attr("transform",
+                  "translate(" + (date1) + "," + (y0-15) + ")")
+            .text(formatTime(y1).substring(0,4)+'0');
+        focus.select("text.y4")
+            .attr("transform",
+                  "translate(" + (date1) + "," + (y0-15) + ")")
+            .text(formatTime(y1).substring(0,4)+'0');
+
+        // Place the dynamic daily downloads text
+        focus.select("text.y5")
+            .attr("transform",
+                  "translate("
+                      + (date1) + ","
+                      + (scatterplotHeight+dateGraphHeight) + ")")
+            .attr("text-anchor", "middle")
+            .text(dataDate[parseInt(xpos*convertDate)].close);
+        focus.select("text.y6")
+            .attr("transform",
+                  "translate("
+                      + (date1) + ","
+                      + (scatterplotHeight+dateGraphHeight) + ")")
+            .attr("text-anchor", "middle")
+            .text(dataDate[parseInt(xpos*convertDate)].close);
+
+        // Place the dynamic time downloads text
+        focus.select("text.y7")
+            .attr("transform",
+                  "translate("
+                      + (scatterplotWidth+timeGraphWidth) + ","
+                      + (y0) + ")")
+            .attr("text-anchor", "start")
+            .text(dataTime[144-parseInt(y0*convertTime)].close);
+        focus.select("text.y8")
+            .attr("transform",
+                  "translate("
+                      + (scatterplotWidth+timeGraphWidth) + ","
+                      + (y0) + ")")
+            .attr("text-anchor", "start")
+            .text(dataTime[144-parseInt(y0*convertTime)].close);
+
+
+        focus.select(".x")
+            .attr("transform",
+                  "translate(" + date1 + "," + (0) + ")")
+            .attr("y2", height );
+
+        focus.select(".y")
+            .attr("transform",
+                  "translate(0," + y0 + ")")
+            .attr("x2", width );
+    }
+});
+
+
 }});
+
+/*Time series data*/
+
+/* Time Series End Data*/
   /* SUCCESS ENDS HERE*/
 });
 });
