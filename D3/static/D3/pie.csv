@@ -1,10 +1,4 @@
 age,population
-application/rss+xml,2
-application/atom+xml,1
-text/html; charset=UTF-8,142
-text/html; charset=iso-8859-1,12
-text/html; charset=windows-1252,2
-text/html; charset=utf-8,196
-text/html; charset=ISO-8859-1,30
-application/pdf,1
-application/xhtml+xml,15
+text/html; charset=UTF-8,4
+text/html; charset=ISO-8859-1,4
+application/xhtml+xml,42

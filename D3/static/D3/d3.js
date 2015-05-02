@@ -1,4 +1,6 @@
 jQuery(document).ready(function() {
+
+    /* On click event for the button  */
     jQuery('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
  
@@ -13,10 +15,14 @@ jQuery(document).ready(function() {
 
      $("#submit").click(function(){
         
-        //var query = document.getElementById('query').value;
-    $.ajax({url: "http://127.0.0.1:8000/d3/", success: function(result){
-       
-
+	/* Get query from text field */
+  var query = document.getElementById("qbox").value;
+  var finalquery=query.replace(" ","+");
+  finalquery="http://127.0.0.1:8000/d3/?query="+finalquery;
+	/* AJAX CALL */     
+	$.ajax({url: finalquery, success: function(result){
+      
+	/* PIE CHART */
 var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2;
@@ -61,7 +67,9 @@ d3.csv("/static/D3/pie.csv", function(error, data) {
 
 });
 
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
+
+/* BAR CHART */
+var margin = {top: 20, right: 20, bottom: 30, left: 70},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -78,7 +86,7 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-    .ticks(10, "%");
+    /*.ticks(10, "%")*/;
 
 var svgbar = d3.select("barchart").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -114,12 +122,53 @@ d3.tsv("/static/D3/bar.tsv", type, function(error, data) {
       .attr("y", function(d) { return y(d.frequency); })
       .attr("height", function(d) { return height - y(d.frequency); });
 
+      
+
+      
 });
 
 function type(d) {
   d.frequency = +d.frequency;
   return d;
 }
-    }});
+    
+
+  /* WORD CLOUD */
+
+  var fill = d3.scale.category20();                                       
+  d3.layout.cloud().size([1000, 1000])
+      .words(result.word_cloud_data.map(function(d) {
+        return {text: d, size: 10 + Math.random() * 90};
+      }))
+      .padding(5)
+      .rotate(function() { return ~~(Math.random() * 2) * 90; })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+
+  function draw(words) {
+    d3.select("wordcloud").append("svg")
+        .attr("width", 1500)
+        .attr("height", 1000)
+      .append("g")
+        .attr("transform", "translate(150,150)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+
+
+  /* WORD CLOUD ENDS HERE */
+}});
+  /* SUCCESS ENDS HERE*/
 });
 });
