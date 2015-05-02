@@ -169,6 +169,11 @@ function type(d) {
 
   /* WORD CLOUD ENDS HERE */
   // functions to parse the date / time formats
+  
+  
+  
+  //Time-series starts here
+  
 parseDate = d3.time.format("%Y-%m-%d").parse;
 parseTime = d3.time.format("%H:%M:%S").parse;
 formatDate = d3.time.format("%d-%b"),
@@ -176,7 +181,7 @@ formatTime = d3.time.format("%H:%M"),
 bisectDate = d3.bisector(function(d) { return d.date; }).left; 
 
 // Load the raw data
-d3.json("/static/D3/downloads.json", function(error, events) {
+d3.json("/static/D3/timeSeries.json", function(error, events) {
 
     // parse and format all the event data
     events.forEach(function(d) {

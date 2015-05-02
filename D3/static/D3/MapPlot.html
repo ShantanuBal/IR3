@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="datamaps.world.min.js"></script>
+<!-- <div id="container" style="position: relative; width: 1200px; height: 700px;"></div> -->
+<div id="map_bombs" style="position: relative; width: 1420px; height: 650px;"></div>
+<script>
+    // var map = new Datamap({element: document.getElementById('container')});
+    //  var map = new Datamap({
+    //     element: document.getElementById('container'),
+    //     scope: 'usa'
+    // });
+
+
+  var bombMap = new Datamap({
+    element: document.getElementById('map_bombs'),
+    scope: 'world',
+    geographyConfig: {
+        popupOnHover: false,
+        highlightOnHover: false
+    },
+    fills: {
+        'USA': '#1f77b4',
+        // 'RUS': '#E62BA2',
+        "RUS": "#9A3C15",
+        'PRK': '#ff7f0e',
+        'PRC': '#2ca02c',
+        'IND': '#e377c2',
+        // "IND":'#000000',
+        'GBR': '#8c564b',
+        'FRA': '#d62728',
+        'PAK': '#7f7f7f',
+        // defaultFill: '#EDDC4E'
+        defaultFill: "#2C88BA"
+    },
+    data: {
+        // 'RUS': {fillKey: 'RUS'},
+        // 'PRK': {fillKey: 'PRK'},
+        // 'PRC': {fillKey: 'PRC'},
+        // 'IND': {fillKey: 'IND'},
+        // 'GBR': {fillKey: 'GBR'},
+        // 'FRA': {fillKey: 'FRA'},
+        // 'PAK': {fillKey: 'PAK'},
+        // 'USA': {fillKey: 'USA'}
+    }
+});
+
+     var bombs = [{
+        ID: 'RDS-37',
+        radius: 8,
+        cType: "text/html",
+        fillKey: 'RUS',
+        date: '1955-11-22',
+        latitude: -70,
+        longitude: 0,
+        fillOpacity: 10
+
+      },{
+        ID: 'Tsar Bomba',
+        radius: 8,
+        cType: "text/html",
+        date: '1961-10-31',
+        fillKey: 'RUS',
+        latitude: 73.482,
+        longitude: 54.5854,
+        fillOpacity:10
+      }
+    ];
+//draw bubbles for bombs
+bombMap.bubbles(bombs, {
+    popupTemplate: function (geo, data) { 
+            return ['<div class="hoverinfo">ID: ' +  data.ID,
+            '<br/>Content Type: ' +  data.cType,
+            '<br/>Date: ' +  data.date + '',
+            '</div>'].join('');
+    }
+});
+</script>
+
+
+
+
+
+<body>
+</body>
+</html>
+
+
+
+
