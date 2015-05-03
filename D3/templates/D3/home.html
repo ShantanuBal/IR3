@@ -12,17 +12,24 @@
   </head>
 
   <body>
-  	<p align="center"> CSCI572</p>
+  	<p align="center"> CSCI572 Group Six</p>
   	<div align="center">
+      <div>
   	<input type="text" id="qbox" name="query" >
+  </div>
   	<br/>
-  	<input type="submit" id="submit" value="submit">
+    <div>
+  	<input type="submit" id="submit" value="Search">
+  </div>
   	</div>
   	<div class="tabs">
     <ul class="tab-links">
-        <li class="active"><a href="#tab1">D3</a></li>
-        <li><a href="#tab2">Banana</a></li>
-        <li><a href="#tab3">Facet View</a></li>
+        <li class="active"><a href="#tab1">D3 Pie</a></li>
+        <li><a href="#tab2">D3 Bar</a></li>
+        <li><a href="#tab3">D3 Word Cloud</a></li>
+        <li><a href="#tab4">D3 Time Series</a></li>
+        <li><a href="#tab5">D3 World Map</a></li>
+        <li><a href="#tab6">D3 </a></li>
     </ul>
 
     <div class="tab-content">
@@ -33,40 +40,43 @@
             </div>
 
             <br/>
+ 
+        </div>
 
+        <div id="tab2" class="tab">
             <div id="barchart">
               <barchart></barchart>
             </div>
 
             <br/>
+        </div>
 
-            <div id="wordcloud">
+        <div id="tab3" class="tab">
+           <div id="wordcloud">
               <wordcloud></wordcloud>
             </div>
 
-	           <br/>
+             <br/>
+        </div>
 
-             <div id="worldmap">
-                <div id="map_bombs" style="position: relative; width: 1000px; height: 600px;"></div>
-              </div>
-
-            <br/>
-
-            <div id="timeseries">
+        <div id="tab4" class="tab">
+          <div id="timeseries">
               <timeseries></timeseries>
             </div>
             
             <br/>
         </div>
 
-        <div id="tab2" class="tab">
-            <p>Tab #2 content goes here!</p>
-            <p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum risus ornare mollis. In hac habitasse platea dictumst. Ut euismod tempus hendrerit. Morbi ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>
+        <div id="tab5" class="tab">
+           <div id="worldmap">
+                <div id="map_bombs" style="position: relative; width: 1000px; height: 600px;"></div>
+              </div>
+
+            <br/>
         </div>
 
-        <div id="tab3" class="tab">
-            <p>Tab #3 content goes here!</p>
-            <p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum ri.</p>
+        <div id="tab6 " class="tab">
+          
         </div>
     </div>
 </div>
