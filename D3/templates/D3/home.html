@@ -21,8 +21,11 @@
   	<div class="tabs">
     <ul class="tab-links">
         <li class="active"><a href="#tab1">D3 World Map</a></li>
-        <li><a href="#tab2">D3 Time Chart</a></li>
-        <li><a href="#tab3">D3 Bar &amp; Pie</a></li>
+        <li><a href="#tab2">D3 Force Graph</a></li>
+        <li><a href="#tab3">D3 Time Chart</a></li>
+        <li><a href="#tab4">D3 Word Cloud</a></li>
+        <li><a href="#tab5">D3 Bar</a></li>
+        <li><a href="#tab6">D3 Pie</a></li>
     </ul>
 
     <div class="tab-content">
@@ -31,34 +34,41 @@
             <div id="worldmap">
                 <div id="map_bombs" style="position: relative; width: 1000px; height: 600px;"></div>
             </div>
-            <br/>
-            <div id="forcegraph">
-              <forcegraph></forcegraph>
-            </div>
+
+             
         </div>
 
-        <div id="tab2" class="tab">
+         <div id="tab2" class="tab">
+            <div id="forcegraph">
+                <forcegraph></forcegraph>
+            </div> 
+        </div>
+
+        <div id="tab3" class="tab">
             <div id="timeseries">
               <timeseries></timeseries>
             </div>
         </div>
 
-        <div id="tab3" class="tab">
+        <div id="tab4" class="tab">
             <div id="wordcloud">
               <wordcloud></wordcloud>
             </div>
 
-            <br/>
+            <br/> 
 
-            <div id="piechart">
-                <piechart></piechart>
-            </div>
+        </div>
 
-            <br/>
-
+        <div id="tab5" class="tab">
             <div id="barchart">
                 <barchart></barchart>
-            </div>            
+            </div> 
+        </div>
+
+        <div id="tab6" class="tab">
+           <div id="piechart">
+                <piechart></piechart>
+            </div>
         </div>
 
     </div>

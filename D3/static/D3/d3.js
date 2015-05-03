@@ -153,7 +153,7 @@ function type(d) {
   function draw(words) {
     d3.select("wordcloud").append("svg")
         .attr("width", 1500)
-        .attr("height", 1000)
+        .attr("height", 750)
       .append("g")
         .attr("transform", "translate(150,150)")
       .selectAll("text")
@@ -523,7 +523,7 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
 
 /* World Map Ends */
 
-/* FORCE GRAPH starts */
+/* FORCE GRAPH */
 
 var width = 960,
     height = 500;
@@ -535,23 +535,23 @@ var force = d3.layout.force()
     .linkDistance(30)
     .size([width, height]);
 
-var svg = d3.select("forcegraph").append("svg")
+var svgforce = d3.select("forcegraph").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("/static/D3/forceGraph.json", function(error, graph) {
+d3.json("/static/D3/forcegraph.json", function(error, graph) {
   force
       .nodes(graph.nodes)
       .links(graph.links)
       .start();
 
-  var link = svg.selectAll(".link")
+  var link = svgforce.selectAll(".link")
       .data(graph.links)
     .enter().append("line")
       .attr("class", "link")
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
-  var node = svg.selectAll(".node")
+  var node = svgforce.selectAll(".node")
       .data(graph.nodes)
     .enter().append("circle")
       .attr("class", "node")
@@ -573,9 +573,7 @@ d3.json("/static/D3/forceGraph.json", function(error, graph) {
   });
 });
 
-
-
-/* FORCE GRAPH ends */
+/* FORCE GRAPH ends here */
 
 
  /* SUCCESS ENDS HERE*/

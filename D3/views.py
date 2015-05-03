@@ -86,7 +86,7 @@ def d3_visual(request):
 			query_string += each
 
 	# Query SOLR
-	url = "http://localhost:9999/solr/collection1/select?q="+query_string+"&rows=50&wt=json&indent=true"
+	url = "http://localhost:8983/solr/collection1/select?q="+query_string+"&rows=50&wt=json&indent=true"
 	print "URL: ", url
 	response = urllib.urlopen(url);
 	data = json.loads(response.read())
@@ -108,10 +108,6 @@ def d3_visual(request):
 
 	# used for time data
 	time_data = []
-
-	# points and co-ordinates
-	count = 0
-	point_data = []
 
 	for each in docs:
 		#if "title" not in each:
@@ -157,9 +153,6 @@ def d3_visual(request):
 								'radius': 6,
 								'fillKey': 'RUS'
 							}]
-				point_data += [[count,lat,lon]]
-				count += 1
-
 		else:
 			map_data += [{
 							'ID':ID, 
@@ -226,16 +219,12 @@ def d3_visual(request):
 		if i>100:
 			break
 		i += 1
-		f.write( str(i) + "\t" + str(min(5500,len(each["content"][0]))) + "\n")
+		f.write( str(i) + "\t" + str(min(100000,len(each["content"][0]))) + "\n")
 	f.close()
 
 	# creating time series file
 	f = open('./D3/static/D3/timeSeries.json', 'w')
 	json.dump(time_data, f)
-	f.close()
-
-	# creating force graph file
-	f = open('./D3/static/D3/forcegraph.json', 'w')
 	f.close()
 
 	print "WC LEN", len(wc_data)
