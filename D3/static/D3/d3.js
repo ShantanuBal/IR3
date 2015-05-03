@@ -63,18 +63,18 @@ d3.csv("/static/D3/pie.csv", function(error, data) {
       .style("fill", function(d) { return color(d.data.age); });
 
   g.append("text")
-      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+      .attr("transform", function(d) { var c = arc.centroid(d); return "translate(" + c[0]*2.0 +"," + c[1]*2.0 + ")"; })
       .attr("dy", ".35em")
-      .style("text-anchor", "middle")
+      .style("text-anchor", "start")
       .text(function(d) { return d.data.age; });
 
 });
 
 
 /* BAR CHART */
-var margin = {top: 20, right: 20, bottom: 30, left: 70},
+var margin = {top: 10, right: 20, bottom: 10, left: 70},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 550 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -137,7 +137,7 @@ function type(d) {
     
 
   /* WORD CLOUD */
-
+  
   var fill = d3.scale.category20();                                       
   d3.layout.cloud().size([1000, 1000])
       .words(result.word_cloud_data.map(function(d) {
@@ -152,7 +152,7 @@ function type(d) {
 
   function draw(words) {
     d3.select("wordcloud").append("svg")
-        .attr("width", 1500)
+        .attr("width", 800)
         .attr("height", 750)
       .append("g")
         .attr("transform", "translate(150,150)")
