@@ -19,6 +19,9 @@ jQuery(document).ready(function() {
   var query = document.getElementById("qbox").value;
   var finalquery=query.replace(" ","+");
   finalquery="http://127.0.0.1:8000/d3/?query="+finalquery;
+
+  /* alert(finalquery); */
+
 	/* AJAX CALL */     
 	$.ajax({url: finalquery, success: function(result){
       
@@ -166,14 +169,16 @@ function type(d) {
         .text(function(d) { return d.text; });
   }
 
-
+  //
   /* WORD CLOUD ENDS HERE */
-  // functions to parse the date / time formats
+  //  
   
-  
-  
-  //Time-series starts here
-  
+  //
+  //
+  //TIME SERIES starts here
+  //
+  //
+
 parseDate = d3.time.format("%Y-%m-%d").parse;
 parseTime = d3.time.format("%H:%M:%S").parse;
 formatDate = d3.time.format("%d-%b"),
@@ -240,7 +245,7 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
     });
 
     // Get number of days in date range to calculate scatterplotWidth
-    var oneDay = 24*60*60*250; // hours*minutes*seconds*milliseconds
+    var oneDay = 24*60*60*5500; // hours*minutes*seconds*milliseconds
     var dateStart = d3.min(data, function(d) { return d.date; });
     var dateFinish = d3.max(data, function(d) { return d.date; });
     var numberDays = Math.round(Math.abs((dateStart.getTime() -
@@ -323,8 +328,8 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
         .data(data)
       .enter().append("circle")
         .attr("class", "dot")
-        .attr("r", function(d) { return d.number_downloaded*3.5; })
-        .style("opacity", 0.8)
+        .attr("r", function(d) { return d.number_downloaded*8.5; })
+        .style("opacity", 1)
         .style("fill", "#e31a1c" )
         .attr("cx", function(d) { return x(d.date); })
         .attr("cy", function(d) { return y(d.time); })
@@ -476,7 +481,7 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
       },
       fills: {
         // Colors for countries
-            "RUS": "#9A3C15",
+            "RUS": "#660066",
             defaultFill: "#2C88BA"
       },
       data: {
@@ -485,7 +490,7 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
       }
   });
 
-       var bombs = [{
+       var bombs = result.map_data;/*[{
           ID: 'RDS-37',
           radius: 8,
           cType: "text/html",
@@ -505,7 +510,7 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
           longitude: 54.5854,
           fillOpacity:10
         }
-      ];
+      ];*/
   //draw bubbles for bombs
   bombMap.bubbles(bombs, {
       popupTemplate: function (geo, data) { 

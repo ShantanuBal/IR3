@@ -78,8 +78,16 @@ def d3_visual(request):
 	else:
 		query = request.GET["query"]
 
+	query_string = ""
+	for each in query:
+		if each == " ":
+			query_string += "+"
+		else:
+			query_string += each
+
 	# Query SOLR
-	url = "http://localhost:8983/solr/collection1/select?q="+query+"&rows=50&wt=json&indent=true"
+	url = "http://localhost:8983/solr/collection1/select?q="+query_string+"&rows=50&wt=json&indent=true"
+	print "URL: ", url
 	response = urllib.urlopen(url);
 	data = json.loads(response.read())
 	
@@ -105,45 +113,75 @@ def d3_visual(request):
 		if "title" not in each:
 			continue
 
+		ID, title, cType, cLen, content = "", "", "", 0, "" 
+		date, time, lat, lon = "", "", randint(60,90), randint(-90,180)
+
+		if "id" in each:
+			ID = each["id"]
+
+		if "title" in each:
+			title = each["title"][0]
+
+		if "content_type" in each:
+			cType = each["content_type"][0]
+
+		if "content" in each:
+			content = each["content"][0]
+			cLen = len(content)
+
+		if "date_created" in each:
+			date = each["date_created"]
+
 		#
 		# Build map data json
 		#
-		lat, lon = randint(60,90), randint(-90,180)
-		if 'latitude' in each: lat = each['latitude']
-		if 'longitude' in each: lon = each['longitude']
-		map_data += [
-						{
-							'ID':each["id"], 
-							'title':each["title"][0], 
-							'cType':each["content_type"][0], 
-							'content_length':len(each["content"][0]),
+		if "clavin_latitude" in each:
+			for i in range(each["clavin_latitude"]):
+				lat = each["clavin_latitude"][i]
+				if "clavin_longitude" in each and i<len(each["clavin_longitude"]):
+					lon = each["clavin_longitude"][i]
+				map_data += [{
+								'ID':ID, 
+								#'title':each["title"][0], 
+								'cType':cType, 
+								'content_length':cLen,
+								'latitude':lat, 
+								'longitude':lon,
+								'radius': 6,
+								'fillKey': 'RUS'
+							}]
+		else:
+			map_data += [{
+							'ID':ID, 
+							#'title':each["title"][0], 
+							'cType':cType, 
+							'content_length':cLen,
 							'latitude':lat, 
 							'longitude':lon,
-							'radius': 10,
+							'radius': 6,
 							'fillKey': 'RUS'
-						}
-					]
-		
+						}]
+			
 		#
 		# Build time data json
 		#
-		yr = str(randint(2005,2015))
-		dy = str(randint(1,30))
-		mn = str(randint(1,12))
-		hr = str(randint(0,24))
-		mi = str(randint(0,60))
-		sc = str(randint(0,60))
-		time, date = "0", "0"
-		if 'time' in each: time = each['time']
-		if 'date' in each: date = each['date']
-		time_data += [ {"dtg": yr+"-"+mn+"-"+dy+" "+hr+":"+mi+":"+sc} ]
+		if not date:
+			yr = str(randint(2005,2015))
+			dy = str(randint(1,30))
+			mn = str(randint(1,12))
+			hr = str(randint(0,24))
+			mi = str(randint(0,60))
+			sc = str(randint(0,60))
+			date = yr+"-"+mn+"-"+dy+" "+hr+":"+mi+":"+sc
+
+		time_data += [ {"dtg": date} ]
 
 		# 
 		# Build vocab for word cloud
 		#
 		each_content = []	
 		if len(wc_data) < 100:
-			for word in re.split(' |\r|\n|\t|/',each["content"][0]):
+			for word in re.split(' |\r|\n|\t|/',content):
 				if len(word)>1 and (65<=ord(word[0])<=90 or 97<=ord(word[0])<122) and (65<=ord(word[-2])<=90 or 97<=ord(word[-2])<122):
 					if word[-1] in ['.',':',',',')']:
 						word = word[:-1]
@@ -157,10 +195,10 @@ def d3_visual(request):
 					except:
 						continue
 		wc_data += each_content
-		if each["content_type"][0] in pie_dict:
-			pie_dict[each["content_type"][0]] += 1
+		if cType in pie_dict:
+			pie_dict[cType] += 1
 		else:
-			pie_dict[each["content_type"][0]] = 1
+			pie_dict[cType] = 1
 	
 	# creating pie chart file
 	f = open("./D3/static/D3/pie.csv","w")
@@ -177,7 +215,7 @@ def d3_visual(request):
 		if i>100:
 			break
 		i += 1
-		f.write( str(i) + "\t" + str(len(each["content"][0])) + "\n")
+		f.write( str(i) + "\t" + str(cLen) + "\n")
 	f.close()
 
 	# creating time series file
@@ -185,7 +223,7 @@ def d3_visual(request):
 	json.dump(time_data, f)
 	f.close()
 
-	print wc_data[0:2000]
+	#print wc_data[0:20]
 	return HttpResponse(json.dumps({"map_data":map_data, "word_cloud_data":wc_data}), content_type="application/json")
 
 def banana_visual(request):
