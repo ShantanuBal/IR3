@@ -1,83 +1,137 @@
-<html>
-  <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="/static/D3/d3.js"></script>
-  <link rel="stylesheet" type="text/css" href="/static/D3/d3.css">
-  <script type="text/javascript" src="/static/D3/d3.min.js"></script>
-      <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-      <script src="/static/D3/d3.layout.cloud.js"></script>
-      <script src="http://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
-      <script src="/static/D3/datamaps.world.min.js"></script>
-  <title>Homework3 CSCI572</title> 
-  </head>
+	<!DOCTYPE html>
+<html lang="en">
 
-  <body background="/static/D3/polar-bears-found-in-the-western-shore-of-hudson-bay.jpg">
-    <h1><p align="center"> CSCI572 - Group 6</p></h1>
-    <p align="center"> Homework 3</p>
-    <div align="center">
-    <input type="text" id="qbox" name="query" style="width:400px;height:30px;">
-    <br/>
-    <div>
-    <input type="submit" id="submit" value="Search" style="position: relative; top: 10px;background-color:lightgreen; width:100px;height:30px;">
-    </div>
-    </div>
-    <div align="center">
-    <div class="tabs">
-    <ul class="tab-links" >
-        <li class="active"><a href="#tab1">D3 World Map</a></li>
-        <li><a href="#tab2">D3 Force Graph</a></li>
-        <li><a href="#tab3">D3 Time Chart</a></li>
-        <li><a href="#tab4">D3 Word Cloud</a></li>
-        <li><a href="#tab5">D3 Bar</a></li>
-        <li><a href="#tab6">D3 Pie</a></li>
-    </ul>
+<head>
+	
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <div class="tab-content" style="background-image:url(/static/D3/polar-bears-found-in-the-western-shore-of-hudson-bay.jpg)">
+    <title>CSCI 572 HomeWork 3</title>
 
-        <div id="tab1" class="tab active">
-            <div id="worldmap">
-                <div id="map_bombs" style="position: relative; width: 1000px; height: 600px;"></div>
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/static/D3/css/bootstrap.min.css" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/static/D3/font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="/static/D3/css/animate.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/D3/css/creative.css" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top">
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Home Visualization</a>
             </div>
 
-             
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="#about">Explore</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
         </div>
+        <!-- /.container-fluid -->
+    </nav>
 
-         <div id="tab2" class="tab">
-            <div id="forcegraph">
-                <forcegraph></forcegraph>
-            </div> 
-        </div>
-
-        <div id="tab3" class="tab">
-            <div id="timeseries">
-              <timeseries></timeseries>
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+                <h1><font color="#000000">CSCI 572</font></h1>
+		<p><font color="#000000" size="6">The Magic of Visualization</font></p>
+		<br/>
+		<p><font color="#000000">Group 6</font></p>
+                <hr class="black">	
+                <a href="#about" class="btn btn-primary btn-xl page-scroll">Explore!!!</a>
             </div>
         </div>
+    </header>
 
-        <div id="tab4" class="tab">
-            <div id="wordcloud" align="center">
-              <wordcloud></wordcloud>
-            </div>
-
-            <br/> 
-
-        </div>
-
-        <div id="tab5" class="tab" style="height:500px">
-            <div id="barchart">
-                <barchart></barchart>
-            </div> 
-        </div>
-
-        <div id="tab6" class="tab">
-           <div id="piechart">
-                <piechart></piechart>
+    <section class="bg-primary" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading">We've got what you need!</h2>
+                    <hr class="light">
+                    <a href="http://localhost:8000/visual.html" class="btn btn-default btn-xl">D3</a>
+		    <a href="#" class="btn btn-default btn-xl">Banana</a>
+ 		    <a href="#" class="btn btn-default btn-xl">FacetView</a>
+                </div>
             </div>
         </div>
+    </section>
+	
+    <aside class="bg-dark">
+        <div class="container text-center">
+            <div class="call-to-action">
+                <h2>Happy Visualization!!! :-)</h2>
+                
+            </div>
+        </div>
+    </aside>
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading">Let's Get In Touch!</h2>
+                    <hr class="primary">
+                    <p>
+			Jai Khanna - jkhanna@usc.edu<br/>
+			Mansi Negi - mansi.negi05@gmail.com<br/>
+			Pranshu Kumar - pranshuk@usc.edu<br/>
+			Shantanu Bal - shantanb@usc.edu<br/>
+			Suhas Subramanya - suhassub@usc.edu<br/>
+		    </p>
+                </div>
+             </div>
+        </div>
+    </section>
 
-    </div>
-</div>
-</div>
+    <!-- jQuery -->
+    <script src="/static/D3/js/jquery.js"></script>
 
-  </body>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/D3/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="/static/D3/js/jquery.easing.min.js"></script>
+    <script src="/static/D3/js/jquery.fittext.js"></script>
+    <script src="/static/D3/js/wow.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/static/D3/js/creative.js"></script>
+
+</body>
+
 </html>
