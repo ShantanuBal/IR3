@@ -17,7 +17,7 @@ jQuery(document).ready(function() {
         
 	/* Get query from text field */
   var query = document.getElementById("qbox").value;
-  var finalquery=query.replace(" ","+");
+  var finalquery=query.replace(/\s/g, '+')/*replace(" ","+")*/;
   finalquery="http://127.0.0.1:8000/d3/?query="+finalquery;
 
   /* alert(finalquery); */

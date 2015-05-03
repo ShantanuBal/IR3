@@ -86,7 +86,7 @@ def d3_visual(request):
 			query_string += each
 
 	# Query SOLR
-	url = "http://localhost:8983/solr/collection1/select?q="+query_string+"&rows=50&wt=json&indent=true"
+	url = "http://localhost:9999/solr/collection1/select?q="+query_string+"&rows=50&wt=json&indent=true"
 	print "URL: ", url
 	response = urllib.urlopen(url);
 	data = json.loads(response.read())
@@ -110,11 +110,11 @@ def d3_visual(request):
 	time_data = []
 
 	for each in docs:
-		if "title" not in each:
-			continue
+		#if "title" not in each:
+		#	continue
 
 		ID, title, cType, cLen, content = "", "", "", 0, "" 
-		date, time, lat, lon = "", "", randint(60,90), randint(-90,180)
+		date, time, lat, lon = "", "", str(randint(60,90)), str(randint(-90,180))
 
 		if "id" in each:
 			ID = each["id"]
@@ -128,6 +128,7 @@ def d3_visual(request):
 		if "content" in each:
 			content = each["content"][0]
 			cLen = len(content)
+			print "CLEN:", cLen
 
 		if "date_created" in each:
 			date = each["date_created"]
@@ -136,7 +137,9 @@ def d3_visual(request):
 		# Build map data json
 		#
 		if "clavin_latitude" in each:
-			for i in range(each["clavin_latitude"]):
+			lat_len = min(len(each["clavin_latitude"]),15)
+			print "LATITUDE: ", lat_len
+			for i in range(lat_len):
 				lat = each["clavin_latitude"][i]
 				if "clavin_longitude" in each and i<len(each["clavin_longitude"]):
 					lon = each["clavin_longitude"][i]
@@ -191,7 +194,8 @@ def d3_visual(request):
 						word = str(word.lower())
 						if word in stopwords:
 							continue
-						each_content.append(word)
+						if len(each_content) < 100:
+							each_content.append(word)
 					except:
 						continue
 		wc_data += each_content
@@ -215,7 +219,7 @@ def d3_visual(request):
 		if i>100:
 			break
 		i += 1
-		f.write( str(i) + "\t" + str(cLen) + "\n")
+		f.write( str(i) + "\t" + str(min(5500,len(each["content"][0]))) + "\n")
 	f.close()
 
 	# creating time series file
@@ -223,7 +227,7 @@ def d3_visual(request):
 	json.dump(time_data, f)
 	f.close()
 
-	#print wc_data[0:20]
+	print "WC LEN", len(wc_data)
 	return HttpResponse(json.dumps({"map_data":map_data, "word_cloud_data":wc_data}), content_type="application/json")
 
 def banana_visual(request):
