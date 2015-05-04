@@ -9,14 +9,8 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="datamaps.world.min.js"></script>
 <!-- <div id="container" style="position: relative; width: 1200px; height: 700px;"></div> -->
-<div id="map_bombs" style="position: relative; width: 1420px; height: 650px;"></div>
+<div id="map_bombs" style="position: relative; width: 1000px; height: 600px; margin-left:13%;"></div>
 <script>
-    // var map = new Datamap({element: document.getElementById('container')});
-    //  var map = new Datamap({
-    //     element: document.getElementById('container'),
-    //     scope: 'usa'
-    // });
-
 
   var bombMap = new Datamap({
     element: document.getElementById('map_bombs'),
@@ -26,28 +20,13 @@
         highlightOnHover: false
     },
     fills: {
-        'USA': '#1f77b4',
-        // 'RUS': '#E62BA2',
-        "RUS": "#9A3C15",
-        'PRK': '#ff7f0e',
-        'PRC': '#2ca02c',
-        'IND': '#e377c2',
-        // "IND":'#000000',
-        'GBR': '#8c564b',
-        'FRA': '#d62728',
-        'PAK': '#7f7f7f',
-        // defaultFill: '#EDDC4E'
-        defaultFill: "#2C88BA"
+      // Colors for countries
+          "RUS": "#9A3C15",
+          defaultFill: "#2C88BA"
     },
     data: {
-        // 'RUS': {fillKey: 'RUS'},
-        // 'PRK': {fillKey: 'PRK'},
-        // 'PRC': {fillKey: 'PRC'},
-        // 'IND': {fillKey: 'IND'},
-        // 'GBR': {fillKey: 'GBR'},
-        // 'FRA': {fillKey: 'FRA'},
-        // 'PAK': {fillKey: 'PAK'},
-        // 'USA': {fillKey: 'USA'}
+      //To add different colors to different countries using the colors above
+        // 'RUS': {fillKey: 'RUS'} 
     }
 });
 
@@ -57,7 +36,7 @@
         cType: "text/html",
         fillKey: 'RUS',
         date: '1955-11-22',
-        latitude: -70,
+        latitude: -80,
         longitude: 0,
         fillOpacity: 10
 
