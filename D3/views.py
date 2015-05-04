@@ -9,6 +9,7 @@ import urllib
 import json
 import csv
 import re
+from math import sin, cos, sqrt, atan2, radians
 
 stopwords = ['var','fasting','id','log','java','nov','takes','stop',
   'access','tab','please','contact','notices','tab2','item','name','help',
@@ -68,6 +69,9 @@ stopwords = ['var','fasting','id','log','java','nov','takes','stop',
 def home(request):
 	return render(request, 'D3/home.html', {})
 
+def visual(request):
+	return render(request, 'D3/visual.html', {})
+
 def d3_visual(request):
 	
 	# Set query here
@@ -108,6 +112,10 @@ def d3_visual(request):
 
 	# used for time data
 	time_data = []
+
+	# used for force graph data
+	force_data = {}
+	count = 0
 
 	for each in docs:
 		#if "title" not in each:
@@ -153,6 +161,8 @@ def d3_visual(request):
 								'radius': 6,
 								'fillKey': 'RUS'
 							}]
+				force_data[count] = [lat, lon]
+				count += 1
 		else:
 			map_data += [{
 							'ID':ID, 
@@ -164,6 +174,8 @@ def d3_visual(request):
 							'radius': 6,
 							'fillKey': 'RUS'
 						}]
+			force_data[count] = [lat, lon]
+			count += 1
 			
 		#
 		# Build time data json
@@ -227,8 +239,49 @@ def d3_visual(request):
 	json.dump(time_data, f)
 	f.close()
 
-	print "WC LEN", len(wc_data)
-	return HttpResponse(json.dumps({"map_data":map_data, "word_cloud_data":wc_data}), content_type="application/json")
+	# creating force graph file
+	links = []
+	nodes = []
+	count = 0
+	f = open('./D3/static/D3/forcegraph.json', 'w')
+	for each in force_data:
+		""""
+		if  force_data[each][0] < 0:
+			if force_data[each][1] < 0:
+				group = 1
+			else:
+				group = 2
+		else:
+			if force_data[each][1] < 0:
+				group = 3
+			else:
+				group = 4
+		"""
+		nodes.append({"name":"d" + str(each), "group":count%10})
+		count += 1
+		for every in force_data:
+			R = 6373.0
+
+			lat1 = radians(float(force_data[each][0]))
+			lon1 = radians(float(force_data[each][1]))
+			lat2 = radians(float(force_data[every][0]))
+			lon2 = radians(float(force_data[every][1]))
+
+			dlon = lon2 - lon1
+			dlat = lat2 - lat1
+			a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2
+			c = 2 * atan2(sqrt(a), sqrt(1-a))
+			distance = R * c
+
+			if distance < 1000 and each != every:
+				links.append({"source":each, "target":every, "value":1})
+
+	json.dump({"nodes":nodes, "links":links}, f)
+	f.close()
+
+	#print "WC LEN", len(wc_data)
+	print "LEN OF DOCS: ", len(force_data)
+	return HttpResponse(json.dumps({"force_data":{"nodes":nodes, "links":links}, "map_data":map_data, "word_cloud_data":wc_data}), content_type="application/json")
 
 def banana_visual(request):
 	return render(request, 'D3/banana_visual.html', {})

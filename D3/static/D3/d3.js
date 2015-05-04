@@ -528,7 +528,7 @@ d3.json("/static/D3/timeSeries.json", function(error, events) {
 var width = 960,
     height = 500;
 
-var color = d3.scale.category20();
+var color = d3.scale.category10();
 
 var force = d3.layout.force()
     .charge(-120)
